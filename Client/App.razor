@@ -1,0 +1,62 @@
+﻿@implements IDisposable
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        @if (UserId > 0 || _nav.Uri + "/" == _nav.ToAbsoluteUri("./").ToString() || _nav.Uri == _nav.ToAbsoluteUri("./").ToString())
+        {
+            <CascadingValue Value="@UserId">
+                <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            </CascadingValue>
+        }
+        else
+        {
+            <p>loading Portelem</p>
+        }
+
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+@code {
+    int UserId = 0;
+
+    [Inject]
+    public Portelem.Auth.AuthHelper _Auth { get; set; }
+
+    [Inject]
+    public NavigationManager _nav { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _nav.LocationChanged += OnLocationChanged;
+        if (_nav.Uri + "/" != _nav.ToAbsoluteUri("./").ToString() &&
+        _nav.Uri != _nav.ToAbsoluteUri("./").ToString() && _nav.Uri != _nav.ToAbsoluteUri("../Game").ToString())
+        {
+            UserId = await _Auth.Check();
+        }
+    }
+
+    public void Dispose()
+    {
+        _nav.LocationChanged -= OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object sender, LocationChangedEventArgs args)
+    {
+        base.InvokeAsync(async () =>
+        {
+            if (_nav.Uri + "/" != _nav.ToAbsoluteUri("./").ToString() &&
+        _nav.Uri != _nav.ToAbsoluteUri("./").ToString() && _nav.Uri != _nav.ToAbsoluteUri("../Game").ToString())
+            {
+                UserId = await _Auth.Check();
+            }
+            StateHasChanged();
+        });
+    }
+}

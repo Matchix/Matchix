@@ -1,0 +1,8 @@
+﻿@page "/"
+
+<h3>The user ID is: @UserId</h3>
+
+@code {
+    [CascadingParameter]
+    public int UserId { get; set; }
+}
