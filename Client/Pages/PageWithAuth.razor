@@ -1,8 +1,62 @@
 ﻿@page "/PageWithAuth"
+@using TriangleProject.Shared.Models.Portelem
+@inject HttpClient Http
+@inject NavigationManager Nav
+
+
 
 <h3>The user ID is: @UserId</h3>
 
+@if (user != null)
+{
+	<p>The Games of: @user.FirstName</p>
+	<ul>
+		@foreach(string game in user.Games) {
+			<li>@game</li>
+		}
+	</ul>
+}
+@if (msg != "")
+{
+	<p>@msg</p>
+	<input type="button" value="reload" @onclick=Navigate />
+}
+
 @code {
-    [CascadingParameter]
-    public int UserId { get; set; }
+	[CascadingParameter]
+	public int UserId { get; set; }
+	UserWithGames user;
+
+	string msg = "";
+	void Navigate()
+	{
+		Nav.NavigateTo("./", true);
+	}
+
+	protected override async Task OnInitializedAsync() {
+	var userRes = await Http.GetAsync("api/games/" + UserId);
+	if (userRes.IsSuccessStatusCode == true)
+		{
+		user = userRes.Content.ReadFromJsonAsync<UserWithGames>().Result;
+		}
+
+		else
+		{
+			string error = userRes.Content.ReadAsStringAsync().Result;
+			switch (error)
+			{
+				case "No Session":
+					msg = "Session error, please reload page";
+					break;
+				case "User Not Logged In":
+					msg = "You are not logged in, please reload page to try again";
+					break;
+				case "User Not Found":
+					msg = "the user details not found, please reload page to try again";
+					break;
+			}
+		}
+
+	}
+
 }
