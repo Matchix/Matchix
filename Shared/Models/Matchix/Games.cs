@@ -13,7 +13,6 @@ namespace TriangleProject.Shared.Models.Matchix
         public string GameName { get; set; }
         public bool canPublic { get; set; }
         public double PairCount { get; set; }
-        public double GameTime { get; set; }
         public int UserId { get; set; }
         public bool IsPublish { get; set; }
 

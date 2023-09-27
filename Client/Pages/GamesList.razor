@@ -1,0 +1,182 @@
+﻿@page "/GamesList"
+@using TriangleProject.Shared.Models.Unity;
+@using TriangleProject.Shared.Models.Portelem;
+@using TriangleProject.Shared.Models.Matchix;
+@inject HttpClient Http;
+@inject NavigationManager Nav;
+
+<h3>Games List</h3>
+
+@if (user != null)
+{
+
+    <p>Add New Game</p>
+    <input type="text" @bind="gameToAdd.GameName" />
+    <input type="button" @onclick="CreateGame" value="Create Game" />
+
+    <p>The Games of: @user.FirstName</p>
+    <table>@*טבלה שתכיל את המשחקים של המשתמש המחובר*@
+        <th>שם המשחק</th>
+        <th>קוד המשחק</th>
+        <th>מספר זוגות</th>
+        <th>הגדרות</th>
+        <th>עריכה</th>
+        <th>פרסום משחק</th>
+        <th>מחיקה</th>
+
+        @foreach (Game game in user.Games)
+        {
+            <tr>
+                <td>@game.GameName</td>
+                <td>@game.GameCode</td>
+                <tb>@game.PairCount</tb>
+                <td>@game.IsPublish</td>
+                <td><input type="button" value="עריכה"/> </td>
+
+                <td>
+                    @if (game.canPublic == false)
+                    {
+                        <input type="checkbox" checked="@game.IsPublish"
+                         @onchange="(() =>changePublish(game))" />
+                    }
+                    else
+                    {
+                    <input type="checkbox" disabled />// במצב שלא עובד בתנאים-אי אפשר ללחוץ
+                    }
+
+                </td>
+                <td><input type="button" value="מחיקה" @onclick="()=> DeleteThisGame(game.ID)" /> </td>
+            </tr>
+
+        }
+    </table>
+
+    @if (msg != "")
+    {
+        <p>@msg</p>
+        <input type="button" value="reload" @onclick=Navigate />
+    }
+}
+
+@code {
+    GameToAdd gameToAdd = new GameToAdd();
+    // שליפת הפרמטר הגלובלי שנשמר עבור המשתמש שהתחבר מהפורטל"מ
+    [CascadingParameter]
+    public int UserId { get; set; }
+
+    // פתיחת מופע חדש של המחלקה
+    UserWithGames user;
+    string msg = "";
+
+    // בעת טעינת העמוד
+    protected override async Task OnInitializedAsync()
+    {
+        // פנייה לקונטרולר ושליפת המשחקים
+        var userRes = await Http.GetAsync("api/games/" + UserId);
+        if (userRes.IsSuccessStatusCode == true)
+        {
+            user = userRes.Content.ReadFromJsonAsync<UserWithGames>().Result;
+        }
+        else
+        {
+            // נטפל במצבים שהיוזר לא רשאי לגשת אל המידע ונאכלס משתנה של הודעה בהתאם.
+            string error = userRes.Content.ReadAsStringAsync().Result;
+            ShowError(error);
+        }
+    }
+
+    async Task CreateGame()
+    {
+        //שליחת המשחק החדש לקונטרולר
+        var userRes = await Http.PostAsJsonAsync("api/Games/" + UserId + "/addGame/", gameToAdd);
+        if (userRes.IsSuccessStatusCode == true)
+        {
+            //החזרת המשחק והוספתו לרשימת המשחקים כדי שיתווסף לטבלה
+            Game newGame = userRes.Content.ReadFromJsonAsync<Game>().Result;
+            user.Games.Add(newGame);
+            gameToAdd.GameName = "";
+        }
+        else
+        {
+
+            string errorFromController = userRes.Content.ReadAsStringAsync().Result;
+            ShowError(errorFromController);
+        }
+    }
+
+    void ShowError(string error)//מאגר השגיאות הקיימות
+    {
+        switch (error)
+        {
+            case "No Session":
+                msg = "Session error, please reload page";
+                break;
+            case "User Not Logged In":
+                msg = "You are not logged in, please reload page to try again";
+                break;
+            case "User Not Found":
+                msg = "the user details not found, please reload page to try again";
+                break;
+            case "Game not created":
+                msg = "the game is not created, please try again later";
+                break;
+            case "Game code not created":
+                msg = "Game code is not created";
+                break;
+        }
+    }
+
+    void Navigate()
+    {
+        Nav.NavigateTo("./", true);
+    }
+
+    protected async Task changePublish(Game game)
+    {
+        PublishGame gameToSend = new PublishGame();
+        gameToSend.ID = game.ID; /*לוקחים את האיידי של המשחק אותו אנחנו רוצים לשנות*/
+        gameToSend.IsPublish = !game.IsPublish;//
+        var userRes = await Http.PostAsJsonAsync("api/games/" + UserId + "/publishGame", gameToSend);// לבדוק למה אין אצלי שגיאה על זה- gameToSend
+        if (userRes.IsSuccessStatusCode == true)
+        {
+            int index = user.Games.IndexOf(game);//עדכון המצב בטבלת המשחקים
+            user.Games[index].IsPublish = !game.IsPublish;
+        }
+        else
+        {
+            string error = userRes.Content.ReadAsStringAsync().Result;
+
+            //טיפול בשגיאות
+            switch (error)
+            {
+                case "No Session":
+                    msg = "Session error, please reload page";
+                    break;
+                case "User Not Logged In":
+                    msg = "You are not logged in, please reload page to try again";
+                    break;
+                case "User Not Found":
+                    msg = "the user details not found, please reload page to try again";
+                    break;
+                case "Game not created":
+                    msg = "There was a problem creating the game";
+                    break;
+                case "Game code not created":
+                    msg = "There was a problem generating the game code";
+                    break;
+                case "It's Not Your Game":
+                    msg = "You tried to update a game that is not associated with your user";
+                    break;
+                case "This game cannot be published":
+                    msg = "The game does not meet the conditions of publishing";
+                    break;
+            }
+        }
+    }
+
+    private void DeleteThisGame(int id)
+    {
+        Console.WriteLine(id);
+
+    }
+}

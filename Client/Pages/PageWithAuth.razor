@@ -11,7 +11,8 @@
 {
 	<p>The Games of: @user.FirstName</p>
 	<ul>
-		@foreach(string game in user.Games) {
+		@foreach(var game in user.Games) 
+		{
 			<li>@game</li>
 		}
 	</ul>
