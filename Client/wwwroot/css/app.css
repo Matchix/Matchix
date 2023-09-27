@@ -1,9 +1,17 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;/* זה משנים לפי הפונט של האפיון שלנו*/
 }
+/*לא למחוק דברים שקשורים לשגיאות בפרוייקט ולא למחוק הכל כי אולי נמחוק דברים שלא צריך למחוק רק לשנות מעט מה שאפשר או להוסיף*/
 
+body
+{ /*מהשיעור של יום שני, משפיע כלובלי על כל הדפים */
+    background-color:burlywood;
+    color:coral;
+    direction:rtl;
+    text-align:right;
+}
 h1:focus {
     outline: none;
 }

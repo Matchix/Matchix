@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TriangleProject.Shared.Models.Matchix;
 
-namespace TriangleProject.Shared.Models.Unity
+namespace TriangleProject.Shared.Models.Matchix
 {
-    public class GameForUnity
+    public class GameToAdd
     {
-  
         public string GameName { get; set; }
-        public List <Pairs> PairList { get; set; }
+        //GameToAdd gameToAdd = new GameToAdd();//לבדוק אם זה נכון
     }
 }

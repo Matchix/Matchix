@@ -16,8 +16,8 @@ namespace TriangleProject.Server.Controllers
         {
             _db = db;
         }
-        [HttpGet("{GameCode}")]
-        public async Task<IActionResult> GetGamesByCode(int GameCode)
+        [HttpGet("{GameCode,UserId}")]
+        public async Task<IActionResult> GetGamesByCode(int GameCode, int UserId)
         {
             object param = new
             {
@@ -41,7 +41,7 @@ namespace TriangleProject.Server.Controllers
                 if (ID > 0 && isShow == true)
                 {
 
-                    string infoQuery = "SELECT GameName, GameTime FROM Games WHERE ID = @Id";
+                    string infoQuery = "SELECT GameName FROM Games WHERE ID = @Id";
                     var gameRecords = await _db.GetRecordsAsync<GameForUnity>(infoQuery, param2);
                     GameForUnity gameDeatils = gameRecords.FirstOrDefault();
                     if(gameDeatils != null)
