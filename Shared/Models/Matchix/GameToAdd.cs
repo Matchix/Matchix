@@ -10,5 +10,7 @@ namespace TriangleProject.Shared.Models.Matchix
     {
         public string GameName { get; set; }
         //GameToAdd gameToAdd = new GameToAdd();//לבדוק אם זה נכון
+
+        public int TimeForQ { get; set; } //זמן לשאלה
     }
 }
