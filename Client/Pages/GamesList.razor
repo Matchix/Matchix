@@ -2,6 +2,7 @@
 @using TriangleProject.Shared.Models.Unity;
 @using TriangleProject.Shared.Models.Portelem;
 @using TriangleProject.Shared.Models.Matchix;
+@using TriangleProject.Client.Components;
 @inject HttpClient Http;
 @inject NavigationManager Nav;
 
@@ -10,9 +11,10 @@
 @if (user != null)
 {
 
-    <p>Add New Game</p>
+    <span>המשחקים שלי</span>
     <input type="text" @bind="gameToAdd.GameName" />
     <input type="button" @onclick="CreateGame" value="Create Game" />
+     <button @onclick="addNewGame"></button>
 
     <p>The Games of: @user.FirstName</p>
     <table>@*טבלה שתכיל את המשחקים של המשתמש המחובר*@
@@ -57,8 +59,14 @@
         <input type="button" value="reload" @onclick=Navigate />
     }
 }
+@if (showNewGamePanel)
+{
+    <NewGamePanel user="@user" NewGameToAdd="HandleNewGameToAdd"></NewGamePanel>
+}
 
-@code {
+
+@code 
+{
     GameToAdd gameToAdd = new GameToAdd();
     // שליפת הפרמטר הגלובלי שנשמר עבור המשתמש שהתחבר מהפורטל"מ
     [CascadingParameter]
@@ -67,6 +75,13 @@
     // פתיחת מופע חדש של המחלקה
     UserWithGames user;
     string msg = "";
+
+    private bool showNewGamePanel = false;
+
+    async Task addNewGame() //לחיצה על כפתור צור משחק מפעילה את הפונקציה
+    {
+        showNewGamePanel = true;
+    }
 
     // בעת טעינת העמוד
     protected override async Task OnInitializedAsync()
@@ -178,5 +193,19 @@
     {
         Console.WriteLine(id);
 
+    }
+    async Task HandleNewGameToAdd(GameToAdd newGameData)
+    {
+        showNewGamePanel = false;
+        var insertResponse = await Http.PostAsJsonAsync("api/Games/" + UserId + "/AddGame", newGameData);
+        if (insertResponse.IsSuccessStatusCode)
+        {
+            Games newGame = insertResponse.Content.ReadFromJsonAsync<Games>().Result;
+            user.Games.Add(newGame);
+        
+
+            nav.NavigateTo("./EditGame/" + newGame.ID); //לבדוק עם מאיקי מה הכוונה בשורה הזאת
+        }
+        
     }
 }

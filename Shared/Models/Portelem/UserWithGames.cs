@@ -11,6 +11,7 @@ namespace TriangleProject.Shared.Models.Portelem
     public class UserWithGames
     {
         public string FirstName { get; set; }
+        public int ID { get; set; }
         public List<Game> Games { get; set; }
 
     }

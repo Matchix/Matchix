@@ -11,10 +11,10 @@ namespace TriangleProject.Shared.Models.Matchix
         public int ID { get; set; }
         public int GameCode { get; set; }
         public string GameName { get; set; }
-        public bool canPublic { get; set; }
+        public bool canPublic { get; set; } //האם עומד בתנאים לפרסום
         public double PairCount { get; set; }
         public int UserId { get; set; }
-        public bool IsPublish { get; set; }
+        public bool IsPublish { get; set; } //האם המשחק מפורסם
 
     }
 }

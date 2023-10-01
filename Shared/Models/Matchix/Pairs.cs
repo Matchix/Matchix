@@ -15,4 +15,5 @@ namespace TriangleProject.Shared.Models.Matchix
         public bool isPicStock { get; set; }// משתנה בוליאני לבדיקת האם מדובר בתמונה במאגר
         public int GameId { get; set; }
     }
+    
 }
