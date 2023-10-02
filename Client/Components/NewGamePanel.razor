@@ -1,0 +1,119 @@
+﻿@using TriangleProject.Shared.Models.Matchix;
+@using TriangleProject.Shared.Models.Portelem;
+
+<div>
+	<button class="exit-btn" @onclick="ClosePanel"></button>
+	<div>
+		<span>הגדרות משחק</span>
+		<div>
+			<span>שם המשחק</span> <span>2-30 תווים</span>
+		</div>
+		<div>
+			<input type="text" @bind="newGameData.GameName" @bind:event="oninput" @onkeyup="countNameChars" maxlength="30" />
+			<span class="default-input @inputClass charCnt">@newGameData.GameName.Length/30</span> @*מספר תווים מתוך 30*@
+		</div>
+		
+		<div> 
+			<span>זמן לשאלה:</span>
+			<div>
+				<input type="button" class="@((newGameData.TimeForQ == 20) ? "selected" : "not-selected")" @onclick="()=>changeQTime(20)" value="20 שניות" />
+				<input type="button" class="@((newGameData.TimeForQ == 30) ? "selected" : "not-selected")" @onclick="()=>changeQTime(30)" value="30 שניות" />
+			</div>
+			<div>
+				<input type="button" class="@((newGameData.TimeForQ == 45) ? "selected" : "not-selected")" @onclick="()=>changeQTime(45)" value="45 שניות" />
+				<input type="button" class="@((newGameData.TimeForQ == 60) ? "selected" : "not-selected")" @onclick="()=>changeQTime(60)" value="60 שניות" />
+			</div>
+
+		</div>
+		<div>
+			<span>הנחיות משחק:</span> <span>2-25 תווים</span>
+		</div>
+		<input type="text" @bind="newGameData.Instruction" @bind:event="oninput" @onkeyup="countInstrucChars" maxlength="25" />
+
+		<div>
+			@if (newGameData.GameName.Length >= 2 && newGameData.GameName.Length <= 30 && newGameData.TimeForQ > 0) //אם המשחק החדש עומד בתנאים הנדרשים
+			{
+				<button @*class="confirm-btn"*@ @onclick="AddNewGame">צור משחק</button> //כפתור במצב פעיל
+			}
+			else 
+			{
+				<button class="dis-btn" @onclick="AddNewGame" disabled>צור משחק</button> //כפתור במצב לא פעיל
+			}
+
+		</div>
+		
+		
+	</div>
+
+</div>
+
+@code {
+
+	[Parameter]
+	public EventCallback<GameToAdd> NewGameToAdd { get; set; }
+
+	[Parameter]
+	public UserWithGames user { get; set; }
+
+	GameToAdd newGameData = new GameToAdd();
+	string inputClass = "";
+	
+	protected override async Task OnInitializedAsync() //ערך אוטומטי לזמן לשאלה
+	{
+		newGameData.TimeForQ = 30; // Default value
+	}
+
+	void countNameChars()
+	{
+		int Namelength = newGameData.GameName.Length;
+		//ברגע שיהיה CSS - יהיה אפשר להוסיף את השינויים בתיבת טקסט בעקבות כמות תווים
+		switch (Namelength)
+		{
+			case <= 1:
+				inputClass = "small-input";
+				break;
+			case >= 2 and <= 30:
+				inputClass = "good-input";
+				break;
+			default:
+				inputClass = "";
+				break;
+		}
+
+	}
+
+	void countInstrucChars()
+	{
+		int Instruclength = newGameData.Instruction.Length;
+		//ברגע שיהיה CSS - יהיה אפשר להוסיף את השינויים בתיבת טקסט בעקבות כמות תווים
+		switch (Instruclength)
+		{
+			case <= 1:
+				inputClass = "small-input";
+				break;
+			case >= 2 and <= 25:
+				inputClass = "good-input";
+				break;
+			default:
+				inputClass = "";
+				break;
+		}
+
+	}
+
+
+	private void ClosePanel()
+	{
+		NewGameToAdd.InvokeAsync();
+	}
+	void changeQTime(int newQtime)
+	{
+		newGameData.TimeForQ = newQtime;
+	}
+
+	private void AddNewGame() //החזרת המופע של המשחק החדש שנוסף מתוך הקומפוננטה לעמוד
+	{
+		NewGameToAdd.InvokeAsync(newGameData);
+	}
+
+}
