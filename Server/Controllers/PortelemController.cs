@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TriangleDbRepository;
+using TriangleProject.Shared.Models.Matchix;
 using TriangleProject.Shared.Models.Portelem;
 
 namespace TriangleProject.Server.Controllers
@@ -48,7 +49,7 @@ namespace TriangleProject.Server.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserFromPortelem user)
+        public async Task<IActionResult> Login(PortelemUser user)
         {
             object getParam = new
             {

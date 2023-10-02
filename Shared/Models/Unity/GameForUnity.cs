@@ -11,6 +11,6 @@ namespace TriangleProject.Shared.Models.Unity
     {
   
         public string GameName { get; set; }
-        public List <Pairs> PairList { get; set; }
+        public List <GamePair> PairList { get; set; }
     }
 }

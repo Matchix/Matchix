@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TriangleProject.Shared.Models.Matchix
 {
-    public class Users
+    public class PortelemUser
     {
         public int ID { get; set; } // האיי די שמתקבל כשמתחברים למשחק
         public string FirstName { get; set; }

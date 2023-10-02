@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TriangleProject.Shared.Models.Matchix
 {
-    public class Pairs
+    public class GamePair
     {
         public int ID { get; set; }
         public string BoardItemContect { get; set; }// קליטת שם פריט בלוח המשחק

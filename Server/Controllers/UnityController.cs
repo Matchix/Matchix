@@ -51,7 +51,7 @@ namespace TriangleProject.Server.Controllers
                         GameId = ID
                      };
                         string infoGame = "SELECT ID BoardItemContect, StockItemContent FROM Pairs WHERE GameId = @GameId";
-                        var gamePair = await _db.GetRecordsAsync<Pairs>(infoGame, param3);
+                        var gamePair = await _db.GetRecordsAsync<GamePair>(infoGame, param3);
                         gameDeatils.PairList= gamePair.ToList();
 
                         return Ok(gameDeatils);// החזר את כל המידע הפנימי של המשחק

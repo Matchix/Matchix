@@ -49,7 +49,7 @@ namespace TriangleProject.Server.Controllers
         }
 
         [HttpPost("addGame")]
-        public async Task<IActionResult> AddGames(int userId, GameToAdd gameToAdd)
+        public async Task<IActionResult> AddGames(int userId, Game gameToAdd)
         {
             //בדיקה האם יש משתמש מחובר- בצד האורך
             int? sessionId = HttpContext.Session.GetInt32("userId");
@@ -99,8 +99,8 @@ namespace TriangleProject.Server.Controllers
                                     ID = newGameId
                                 };
                                 string gameQuery = "SELECT ID, GameName, GameCode, PairCount, IsPublish, canPublic FROM Games WHERE ID = @ID";
-                                var gameRecord = await _db.GetRecordsAsync<Games>(gameQuery, param2);
-                                Games newGame = gameRecord.FirstOrDefault();
+                                var gameRecord = await _db.GetRecordsAsync<Game>(gameQuery, param2);
+                                Game newGame = gameRecord.FirstOrDefault();
                                 return Ok(newGame);
                             }
                             return BadRequest("Game code not created");
