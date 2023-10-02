@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TriangleProject.Shared.Models.Matchix
+namespace TriangleProject.Shared.Models.Portelem
 {
     public class PortelemUser
     {

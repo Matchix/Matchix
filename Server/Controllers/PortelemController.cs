@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TriangleDbRepository;
 using TriangleProject.Shared.Models.Matchix;
@@ -71,6 +74,26 @@ namespace TriangleProject.Server.Controllers
             HttpContext.Session.SetInt32("userId", userId);
             return Ok(userId);
 
+        }
+
+        [HttpGet("activeuser")]
+        public async Task<IActionResult> GetLoggedInUser()
+        {
+            int? sessionId = HttpContext.Session.GetInt32("userId");
+            if (sessionId == null)
+            {
+                return BadRequest("No user signed in");
+            }
+
+            object userQueryParameters = new
+            {
+                ID = sessionId 
+            };
+
+            string userQuery = $"Select * FROM Users WHERE ID=@ID";
+            PortelemUser currentUser = (await _db.GetRecordsAsync<PortelemUser>(userQuery, userQueryParameters)).FirstOrDefault();
+            Console.WriteLine(JsonSerializer.Serialize(currentUser));
+            return Ok(currentUser);
         }
     }
 }

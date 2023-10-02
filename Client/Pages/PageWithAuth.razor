@@ -1,5 +1,6 @@
 ﻿@page "/PageWithAuth"
 @using TriangleProject.Shared.Models.Portelem
+@using TriangleProject.Shared.Models.Unity
 @inject HttpClient Http
 @inject NavigationManager Nav
 
@@ -11,7 +12,7 @@
 {
 	<p>The Games of: @user.FirstName</p>
 	<ul>
-		@foreach(var game in user.Games) 
+		@foreach(var game in userGames) 
 		{
 			<li>@game</li>
 		}
@@ -26,7 +27,8 @@
 @code {
 	[CascadingParameter]
 	public int UserId { get; set; }
-	UserWithGames user;
+	PortelemUser user;
+	Game[] userGames;
 
 	string msg = "";
 	void Navigate()
@@ -35,15 +37,15 @@
 	}
 
 	protected override async Task OnInitializedAsync() {
-	var userRes = await Http.GetAsync("api/games/" + UserId);
-	if (userRes.IsSuccessStatusCode == true)
+	var gamesResult = await Http.GetAsync("api/games/" + UserId);
+	if (gamesResult.IsSuccessStatusCode == true)
 		{
-		user = userRes.Content.ReadFromJsonAsync<UserWithGames>().Result;
+			userGames = gamesResult.Content.ReadFromJsonAsync<Game[]>().Result;
 		}
 
 		else
 		{
-			string error = userRes.Content.ReadAsStringAsync().Result;
+			string error = gamesResult.Content.ReadAsStringAsync().Result;
 			switch (error)
 			{
 				case "No Session":
