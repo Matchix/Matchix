@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Net.Http.Headers;
 using TriangleProject.Shared.Models.Portelem;
+using TriangleProject.Shared.Models.Matchix;
 
 namespace Portelem.Auth
 {
@@ -44,7 +45,7 @@ namespace Portelem.Auth
 
             if (systemStatus != "QA" && systemStatus != "Complete") //Develop - no need cookie check
             {
-                UserFromPortelem devUser = new UserFromPortelem();
+                PortelemUser devUser = new PortelemUser();
                 devUser.PortelemId = -1;
                 var getUser = await _http.PostAsJsonAsync("api/Portelem/login/", devUser);
                 if (getUser.IsSuccessStatusCode)
@@ -94,7 +95,7 @@ namespace Portelem.Auth
                 return 0;
                 //Unauthorize/no user - redirect to portelem login
             }
-            UserFromPortelem studentUser = checkPortelem.Content.ReadFromJsonAsync<UserFromPortelem>().Result;
+            PortelemUser studentUser = checkPortelem.Content.ReadFromJsonAsync<PortelemUser>().Result;
             var userRes = await _http.PostAsJsonAsync("api/Portelem/login", studentUser);
             if (userRes.IsSuccessStatusCode)
                 return userRes.Content.ReadFromJsonAsync<int>().Result;

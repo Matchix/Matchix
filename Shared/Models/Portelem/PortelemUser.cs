@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace TriangleProject.Shared.Models.Portelem
 {
-    public class UserFromPortelem
+    public class PortelemUser
     {
+        public int ID { get; set; } // האיי די שמתקבל כשמתחברים למשחק
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int PortelemId { get; set; }
+        public int PortelemId { get; set; } // האיי די שמקבלים כשמתחברים לפורט"למ
+
     }
 }

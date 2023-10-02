@@ -2,12 +2,18 @@
 @using TriangleProject.Shared.Models.Unity;
 @using TriangleProject.Shared.Models.Portelem;
 @using TriangleProject.Shared.Models.Matchix;
+@using System.Net.Http.Json;
+@using System.Linq;
 @inject HttpClient Http;
 @inject NavigationManager Nav;
 
 <h3>Games List</h3>
 
-@if (user != null)
+@if(GameList == null)
+{
+    <p>No Games Here!</p>
+}
+@if (GameList != null && user != null)
 {
 
     <p>Add New Game</p>
@@ -24,7 +30,7 @@
         <th>פרסום משחק</th>
         <th>מחיקה</th>
 
-        @foreach (Game game in user.Games)
+        @foreach (Game game in GameList)
         {
             <tr>
                 <td>@game.GameName</td>
@@ -59,28 +65,36 @@
 }
 
 @code {
-    GameToAdd gameToAdd = new GameToAdd();
+    Game gameToAdd = new Game();
     // שליפת הפרמטר הגלובלי שנשמר עבור המשתמש שהתחבר מהפורטל"מ
     [CascadingParameter]
     public int UserId { get; set; }
 
     // פתיחת מופע חדש של המחלקה
-    UserWithGames user;
+    PortelemUser user;
+    List<Game> GameList;
     string msg = "";
 
     // בעת טעינת העמוד
     protected override async Task OnInitializedAsync()
     {
-        // פנייה לקונטרולר ושליפת המשחקים
-        var userRes = await Http.GetAsync("api/games/" + UserId);
-        if (userRes.IsSuccessStatusCode == true)
+
+        var userResult = await Http.GetAsync("api/portelem/activeuser");
+        if(userResult.IsSuccessStatusCode)
         {
-            user = userRes.Content.ReadFromJsonAsync<UserWithGames>().Result;
+            user = await userResult.Content.ReadFromJsonAsync<PortelemUser>();
+        }
+
+        // פנייה לקונטרולר ושליפת המשחקים
+        var gameListResult = await Http.GetAsync("api/games/" + UserId);
+        if (gameListResult.IsSuccessStatusCode == true)
+        {
+            GameList = gameListResult.Content.ReadFromJsonAsync<List<Game>>().Result;
         }
         else
         {
             // נטפל במצבים שהיוזר לא רשאי לגשת אל המידע ונאכלס משתנה של הודעה בהתאם.
-            string error = userRes.Content.ReadAsStringAsync().Result;
+            string error = gameListResult.Content.ReadAsStringAsync().Result;
             ShowError(error);
         }
     }
@@ -88,12 +102,13 @@
     async Task CreateGame()
     {
         //שליחת המשחק החדש לקונטרולר
-        var userRes = await Http.PostAsJsonAsync("api/Games/" + UserId + "/addGame/", gameToAdd);
+        Console.WriteLine(UserId);
+        var userRes = await Http.PostAsJsonAsync("api/Games/" + UserId + "/addGame", (object) gameToAdd);
         if (userRes.IsSuccessStatusCode == true)
         {
             //החזרת המשחק והוספתו לרשימת המשחקים כדי שיתווסף לטבלה
             Game newGame = userRes.Content.ReadFromJsonAsync<Game>().Result;
-            user.Games.Add(newGame);
+            GameList.Add(newGame);
             gameToAdd.GameName = "";
         }
         else
@@ -133,14 +148,12 @@
 
     protected async Task changePublish(Game game)
     {
-        PublishGame gameToSend = new PublishGame();
-        gameToSend.ID = game.ID; /*לוקחים את האיידי של המשחק אותו אנחנו רוצים לשנות*/
-        gameToSend.IsPublish = !game.IsPublish;//
-        var userRes = await Http.PostAsJsonAsync("api/games/" + UserId + "/publishGame", gameToSend);// לבדוק למה אין אצלי שגיאה על זה- gameToSend
+        game.IsPublish = !game.IsPublish;//
+        var userRes = await Http.PostAsJsonAsync("api/games/" + UserId + "/publishGame", game);// לבדוק למה אין אצלי שגיאה על זה- gameToSend
         if (userRes.IsSuccessStatusCode == true)
         {
-            int index = user.Games.IndexOf(game);//עדכון המצב בטבלת המשחקים
-            user.Games[index].IsPublish = !game.IsPublish;
+            int index = GameList.IndexOf(game);//עדכון המצב בטבלת המשחקים
+            GameList[index].IsPublish = !game.IsPublish;
         }
         else
         {
@@ -177,6 +190,5 @@
     private void DeleteThisGame(int id)
     {
         Console.WriteLine(id);
-
     }
 }

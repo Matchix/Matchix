@@ -16,14 +16,15 @@ namespace TriangleProject.Server.Controllers
         {
             _db = db;
         }
-        [HttpGet("{GameCode,UserId}")]
-        public async Task<IActionResult> GetGamesByCode(int GameCode, int UserId)
+        [HttpGet("getgame")]
+        public async Task<IActionResult> GetGameByCode(int GameCode, int UserId)
         {
             object param = new
             {
-                gameCode = GameCode
+                gameCode = GameCode,
+                userId = UserId
             };
-            string userQuery = "SELECT ID FROM Games WHERE GameCode=@gameCode";//שאילתה לשליפת התאמת קוד נתון מהיוזר לקוד קיים במערכת
+            string userQuery = "SELECT ID FROM Games WHERE GameCode=@gameCode AND UserId=@userId";//שאילתה לשליפת התאמת קוד נתון מהיוזר לקוד קיים במערכת
             var userRecords = await _db.GetRecordsAsync<int>(userQuery, param);
             int ID = userRecords.FirstOrDefault();//קליטת הקוד והצגתו כקוד היחיד הקיים
 
@@ -42,19 +43,28 @@ namespace TriangleProject.Server.Controllers
                 {
 
                     string infoQuery = "SELECT GameName FROM Games WHERE ID = @Id";
-                    var gameRecords = await _db.GetRecordsAsync<GameForUnity>(infoQuery, param2);
-                    GameForUnity gameDeatils = gameRecords.FirstOrDefault();
-                    if(gameDeatils != null)
+                    var gameRecords = await _db.GetRecordsAsync<Game>(infoQuery, param2);
+                    Game game = gameRecords.FirstOrDefault();
+                    if(game != null)
                     {
-                     object param3 = new
-                     {
+                        object param3 = new
+                        {
                         GameId = ID
-                     };
+                        };
+                    
                         string infoGame = "SELECT ID BoardItemContect, StockItemContent FROM Pairs WHERE GameId = @GameId";
-                        var gamePair = await _db.GetRecordsAsync<Pairs>(infoGame, param3);
-                        gameDeatils.PairList= gamePair.ToList();
+                        var gamePair = await _db.GetRecordsAsync<GamePair>(infoGame, param3);
+                        List<GamePair> PairList= gamePair.ToList();
 
-                        return Ok(gameDeatils);// החזר את כל המידע הפנימי של המשחק
+                        object response = new
+                        {
+                            game.GameName,
+                            game.GameCode,
+                            game.UserId,
+                            PairList
+                        };
+
+                        return Ok(response);// החזר את כל המידע הפנימי של המשחק
                     }
                    
                 }
@@ -64,7 +74,6 @@ namespace TriangleProject.Server.Controllers
 
             return BadRequest("Game Not Found");//הודעת אי מציאת קוד משחק בבסיס הנתונים
         }
-
     }
 }
 
