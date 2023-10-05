@@ -1,0 +1,18 @@
+﻿@page "/edit"
+
+<div>
+    <div class="title">
+        <h1>מאגר זוגות</h1>
+    </div>
+        <div class="center-stuff">
+            <p class="condition-caption">תנאי לפרסום המשחק: </p>
+            <p class="condition">18 זוגות</p>
+            <button class="new-pair-button">+זוג חדש</button>
+        </div>
+    <div class="container">
+        @for (int i = 0; i < 18; i++)
+        {
+            <PairThumbnail></PairThumbnail>
+        }
+    </div>
+</div>

@@ -1,0 +1,43 @@
+﻿.container {
+    width: 100%;
+    height: 50vh;
+    background-color: rgb(225, 99, 99);
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 10px;
+    padding: 3px;
+}
+
+.title
+{
+    background-color: purple;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-stuff {
+    display: flex;
+    justify-content: center;
+}
+
+
+.condition-caption {
+    display: flex;
+    color: purple;
+    font-size: xx-large;
+}
+
+.condition 
+{
+    color: black;
+    font-size: xx-large;
+    
+}
+
+.new-pair-button 
+{
+    height: 60px;
+    width: 150px;
+    background-color: orange;
+}

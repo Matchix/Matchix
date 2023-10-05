@@ -1,0 +1,30 @@
+﻿
+<div class="pair-container" @onclick="OpenEditPairPopup">
+    <div class="pair"></div>
+    <div class="pair"></div>
+</div>
+<style>
+    .pair-container {
+    @* width: 100px; /* Adjust the size of the square as needed */ *@
+    @* height: 100px; /* Adjust the size of the square as needed */ *@
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px; /* Rounded corners */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 5px;
+    padding: 3px;
+}
+
+.pair {
+    @* flex: 1; *@
+    background-color: rgba(107, 107, 107, 0.5); /* Semi-transparent gray */
+}
+</style>
+
+@code
+{
+    public void OpenEditPairPopup()
+    {
+        Console.WriteLine("Mocking opening edit pair popup..");
+    }
+}
