@@ -1,0 +1,9 @@
+﻿.element
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20% 2% 20% 2%;
+    border-radius: 10px;
+    background-color: rgb(200,200,200);
+}

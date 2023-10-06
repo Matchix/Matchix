@@ -1,0 +1,24 @@
+﻿@using TriangleProject.Client.Components.PairElement;
+
+<div class="pair-container" @onclick="OpenEditPairPopup">
+    <PairElement Type="PairElementType.Image"></PairElement>
+    <PairElement Type="PairElementType.Text"></PairElement>
+</div>
+<style>
+    .pair-container {
+    background-color: rgb(230, 230, 230);
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 5px;
+    border: 1px solid black;
+}
+</style>
+
+@code
+{
+    public void OpenEditPairPopup()
+    {
+        Console.WriteLine("Mocking opening edit pair popup..");
+    }
+}

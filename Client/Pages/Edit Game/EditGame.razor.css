@@ -1,0 +1,50 @@
+﻿.table
+{
+    background-color: white;
+    border-radius: 10px;
+}
+
+.container {
+    width: 100%;
+    height: 70vh;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 10px;
+    padding: 3px;
+}
+
+.title
+{
+    background-color: rgb(120,40,200);
+    display: flex;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-stuff {
+    display: flex;
+    justify-content: center;
+}
+
+
+.condition-caption {
+    display: flex;
+    color: purple;
+    font-size: xx-large;
+}
+
+.condition 
+{
+    color: black;
+    font-size: xx-large;
+    
+}
+
+.new-pair-button 
+{
+    height: 60px;
+    width: 150px;
+    background-color: orange;
+}
