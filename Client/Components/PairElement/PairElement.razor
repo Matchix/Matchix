@@ -1,0 +1,22 @@
+﻿<div class="element">
+    <p>@Content</p>
+</div>
+
+@code
+{
+    [Parameter] public PairElementType Type {get; set;}
+    private string Content {get; set;}
+    protected override async Task OnInitializedAsync()
+    {
+        switch(Type)
+        {
+            case PairElementType.Image:
+                Content = "Image!";
+                break;
+            
+            case PairElementType.Text:
+                Content = "Text!";
+                break;
+        }
+    }
+}

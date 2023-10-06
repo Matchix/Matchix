@@ -1,7 +1,12 @@
-﻿.container {
+﻿.table
+{
+    background-color: white;
+    border-radius: 10px;
+}
+
+.container {
     width: 100%;
-    height: 50vh;
-    background-color: rgb(225, 99, 99);
+    height: 70vh;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     grid-gap: 10px;
@@ -10,8 +15,10 @@
 
 .title
 {
-    background-color: purple;
+    background-color: rgb(120,40,200);
     display: flex;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
     justify-content: center;
     align-items: center;
 }
