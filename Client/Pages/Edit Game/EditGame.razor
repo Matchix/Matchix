@@ -1,4 +1,5 @@
-﻿@using TriangleProject.Client.Components.PairThumbnail;
+﻿@using System.Linq;
+@using TriangleProject.Client.Components.PairThumbnail;
 @page "/edit"
 
 <div class="page">
@@ -21,8 +22,35 @@
         <div class="container">
             @for (int i = 0; i < 18; i++)
             {
-                <PairThumbnail></PairThumbnail>
+                <PairThumbnail
+                    TypeLeft=@elements[i][0].Item1
+                    ContentLeft=@elements[i][0].Item2
+                    TypeRight=@elements[i][1].Item1
+                    ContentRight=@elements[i][1].Item2
+                    ></PairThumbnail>
             }
         </div>
     </div>
 </div>
+
+@code
+{
+    (ContentType, string)[][] elements = EditGame.GetElements();
+    
+    private static (ContentType, string)[][] GetElements()
+    {
+        var elements = Enumerable.Repeat(new (ContentType, string)[2], 18).Select(a => 
+        {
+            ContentType type1 = ContentTypeExtensions.Random();
+            string text1 = type1 == ContentType.Image ? "images/image1.png" : "Placeholder";
+            ContentType type2 = ContentTypeExtensions.Random();
+            string text2 = type2 == ContentType.Image ? "images/image1.png" : "Placeholder";
+            
+            Console.WriteLine($"Pairs: ({type1}, {text1}),   ({type2}, {text2})");
+            
+            return new (ContentType, string)[]{(type1, text1), (type2, text2)};
+        });
+
+        return elements.ToArray();
+    }
+}
