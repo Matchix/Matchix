@@ -1,19 +1,56 @@
-﻿@using TriangleProject.Client.Components.PairThumbnail;
+﻿@using System.Linq;
+@using TriangleProject.Client.Components.PairThumbnail;
 @page "/edit"
 
-<div class="table">
-    <div class="title">
-        <h1>מאגר זוגות</h1>
-    </div>
-        <div class="center-stuff">
-            <p class="condition-caption">תנאי לפרסום המשחק: </p>
-            <p class="condition">18 זוגות</p>
-            <button class="new-pair-button">+ זוג חדש</button>
+<div class="page">
+    <div class="page-title">
+        <h1 class="actual-title">עריכת משחק</h1>
+        <div class="page-buttons">
+            <button>ערוך הגדרות</button>
+            <button>עבור למשחקים שלי</button>
         </div>
-    <div class="container">
-        @for (int i = 0; i < 18; i++)
-        {
-            <PairThumbnail></PairThumbnail>
-        }
+    </div>
+    <div class="table">
+        <div class="table-title">
+            <h1>מאגר זוגות</h1>
+        </div>
+            <div class="center-stuff">
+                <p class="condition-caption">תנאי לפרסום המשחק: </p>
+                <p class="condition">18 זוגות</p>
+                <button class="new-pair-button">+ זוג חדש</button>
+            </div>
+        <div class="container">
+            @for (int i = 0; i < 18; i++)
+            {
+                <PairThumbnail
+                    TypeLeft=@elements[i][0].Item1
+                    ContentLeft=@elements[i][0].Item2
+                    TypeRight=@elements[i][1].Item1
+                    ContentRight=@elements[i][1].Item2
+                    ></PairThumbnail>
+            }
+        </div>
     </div>
 </div>
+
+@code
+{
+    (ContentType, string)[][] elements = EditGame.GetElements();
+    
+    private static (ContentType, string)[][] GetElements()
+    {
+        var elements = Enumerable.Repeat(new (ContentType, string)[2], 18).Select(a => 
+        {
+            ContentType type1 = ContentTypeExtensions.Random();
+            string text1 = type1 == ContentType.Image ? "images/image1.png" : "Placeholder";
+            ContentType type2 = ContentTypeExtensions.Random();
+            string text2 = type2 == ContentType.Image ? "images/image1.png" : "Placeholder";
+            
+            Console.WriteLine($"Pairs: ({type1}, {text1}),   ({type2}, {text2})");
+            
+            return new (ContentType, string)[]{(type1, text1), (type2, text2)};
+        });
+
+        return elements.ToArray();
+    }
+}

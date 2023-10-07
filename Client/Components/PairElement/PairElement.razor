@@ -1,22 +1,21 @@
 ﻿<div class="element">
-    <p>@Content</p>
+    @if(!Content.Equals(string.Empty))
+    {
+        @switch (Type)
+        {
+            case ContentType.Image:
+                <img src=@Content />
+                break;
+            
+            case ContentType.Text:
+                <p>@Content</p>
+                break;
+        }
+    }
 </div>
 
 @code
 {
-    [Parameter] public PairElementType Type {get; set;}
-    private string Content {get; set;}
-    protected override async Task OnInitializedAsync()
-    {
-        switch(Type)
-        {
-            case PairElementType.Image:
-                Content = "Image!";
-                break;
-            
-            case PairElementType.Text:
-                Content = "Text!";
-                break;
-        }
-    }
+    [Parameter] public ContentType Type {get; set;}
+    [Parameter] public string Content {get; set;} = string.Empty;
 }
